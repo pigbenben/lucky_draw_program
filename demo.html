@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            height: 0;
+        }
+        .container{
+            width:300px;
+            height: 300px;
+            display: flex;
+            flex-wrap: wrap;
+            border: 1px solid red;
+            position: relative;
+        }
+        .container div{
+            width: 100px;
+            height: 100px;
+            box-sizing: border-box;
+            border: 1px solid red;
+            /* line-height: 100px; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #start_btn{
+            width: 100%;
+            height: 100%;
+            background-image:-webkit-linear-gradient(bottom,blue, rgb(48, 156, 245));
+            font-size: 20px;
+            color: red;
+            border:none;
+            outline: none;
+            cursor: pointer;
+        }
+        #messege_box{
+            width: 160px;
+            height: 160px;
+            border-radius: 15px;
+            position: absolute;
+            top:70px;
+            left:70px;
+            background: rgb(187, 255, 0);
+            font-size: 20px;
+            border:none;
+            outline: none;
+            cursor: pointer;
+            animation: prize 1s linear ; /*调用动画 1秒执行一次，匀速播放，循环播放、设置播放流畅（逆播放）*/
+        }
+        @keyframes prize{
+            0%{ /*从哪里来=0%*/
+                transform: scale(0);
+                /* transform:translateX(-30px) */
+            }
+            100%{ /*到哪里去=100%*/
+                transform: scale(1);
+                /* transform:translateX(30px) */
+            }
+        }
+
+        #messege_box span{
+            color:red;
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body style="display: flex;justify-content: center;align-items: center;height: 100vh;">
+    <div class="container">
+        <div id="prize1">华为20pro</div>
+        <div id="prize2">苹果ipad</div>
+        <div id="prize3">iphone10</div>
+        <div id="prize8">海尔冰箱</div>
+        <div>
+            <button  id="start_btn" disabled></button>
+        </div>
+        <div id="prize4">格力空调</div>
+        <div id="prize7">小米音响</div>
+        <div id="prize6">华硕笔记本电脑</div>
+        <div id="prize5">美的豆浆机</div>
+        <button id="messege_box" style="display: none;">
+                恭喜您，获得奖品:<span id="messege_span"></span>
+        </button>
+    </div>
+    
+    <script type="text/javascript">
+       window.onload = function(){
+        var start_btn =document.getElementById("start_btn");
+        var messege_box =document.getElementById("messege_box");
+        var messege_box =document.getElementById("messege_span");
+        // 倒计时时间
+        var timer = 5;
+        // 抽奖定时器索引
+        var intervalIndex;
+        // 初始化按钮倒计时
+        start_btn.innerHTML =`00:${timer<10?`0`+timer:timer}`
+        //设置倒计时
+        intervalIndex = setInterval(function(){
+            timer --;
+            start_btn.innerHTML =`00:${timer<10?`0`+timer:timer}`
+            if(timer<=0){
+                // 清除定时器，改变按钮文字
+                clearInterval(intervalIndex);
+                start_btn.innerHTML = '开始抽奖';
+                start_btn.disabled = false;
+            } 
+        },1000)
+        start_btn.addEventListener('click',clickStart);
+        messege_box.addEventListener('click',clickPrize);
+       }
+       var  awardIndex;//奖品下标
+       //点击开始抽奖按钮
+       function clickStart(){
+            // 奖品索引
+            prizeIndex = 1;
+            // 轮数
+            count = 1;
+            // 计时器索引
+            var startIterval;
+            //清除上一轮中奖样式
+            if(awardIndex)
+            document.getElementById('prize'+awardIndex).style.backgroundColor = '';
+            // 模拟中奖随机数
+            awardIndex = Math.floor(Math.random()*8)+1;
+            // console.log("本次中奖为"+awardIndex)
+            startIterval=setInterval(function(){
+                //获取格子，点亮
+                document.getElementById('prize'+prizeIndex).style.backgroundColor = 'red';
+                //实现跑马灯，熄灭上一个格子 
+                document.getElementById('prize'+(prizeIndex == 1?8:prizeIndex-1)).style.backgroundColor = '';
+                // 跑完四轮，停在中奖的格子
+                // console.log("prizeIndex："+prizeIndex)
+                if(count >=4 && prizeIndex == awardIndex){
+                    // 清除定时器
+                    clearInterval(startIterval);
+                        setTimeout(function(){
+                            messege_span.innerHTML =document.getElementById('prize'+awardIndex).innerText;
+                            messege_box.style.display ='block';
+                        },500);
+                }
+                //移动格子
+                prizeIndex ++;
+                 //轮数
+                 if(prizeIndex >8){
+                    prizeIndex =1;
+                    count ++;
+                }
+            },100)
+       }
+       function clickPrize(){
+            messege_box.style.display ='none';
+        }
+    </script>
+</body>
+
+
+</html>
